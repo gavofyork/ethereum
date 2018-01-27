@@ -550,7 +550,7 @@ struct UPnP
 		printf("TB : init_upnp()\n");
 		memset(&urls, 0, sizeof(struct UPNPUrls));
 		memset(&data, 0, sizeof(struct IGDdatas));
-		devlist = upnpDiscover(2000, NULL/*multicast interface*/, NULL/*minissdpd socket path*/, 0/*sameport*/, 0/*ipv6*/, &upnperror);
+		devlist = upnpDiscover(2000, NULL/*multicast interface*/, NULL/*minissdpd socket path*/, 0/*sameport*/, 0/*ipv6*/, 2/*ttl*/, &upnperror);
 		if (devlist)
 		{
 			dev = devlist;
@@ -566,7 +566,9 @@ struct UPnP
 			printf("UPnP device :\n"
 				   " desc: %s\n st: %s\n",
 				   dev->descURL, dev->st);
-#if MINIUPNPC_API_VERSION >= 9
+#if MINIUPNPC_API_VERSION >= 16
+			descXML = (char*)miniwget(dev->descURL, &descXMLsize, 2, 0);
+#elif MINIUPNPC_API_VERSION >= 9
 			descXML = (char*)miniwget(dev->descURL, &descXMLsize, 0);
 #else
 			descXML = (char*)miniwget(dev->descURL, &descXMLsize);
